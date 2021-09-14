@@ -17,8 +17,8 @@ local income = settings.global["PTI_income"].value
 --#region Functions of events
 
 local function add_money()
-	for _, force in pairs(game.forces) do
-		call("EasyAPI", "deposit_force_money", force, income)
+	for force_index, money in pairs(call("EasyAPI", "get_forces_money")) do
+		call("EasyAPI", "set_force_money_by_index", force_index, money + income)
 	end
 end
 
