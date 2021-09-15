@@ -35,7 +35,7 @@ local mod_settings = {
 	end
 }
 local function on_runtime_mod_setting_changed(event)
-	if event.setting_type ~= "runtime-global" then return end
+	-- if event.setting_type ~= "runtime-global" then return end
 	if not match(event.setting, "^PTI_") then return end
 
 	local f = mod_settings[event.setting]
