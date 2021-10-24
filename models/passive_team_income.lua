@@ -3,7 +3,6 @@ local M = {}
 
 
 --#region Constants
-local match = string.match
 local call = remote.call
 --#endregion
 
@@ -11,18 +10,32 @@ local call = remote.call
 --#region Settings
 local update_tick = settings.global["PTI_update_tick"].value
 local income = settings.global["PTI_income"].value
+local is_for_online_teams = settings.global["PTI_is_for_online_teams"].value
 --#endregion
 
 
 --#region Functions of events
 
 local function add_money()
-	for force_index, money in pairs(call("EasyAPI", "get_forces_money")) do
-		call("EasyAPI", "set_force_money_by_index", force_index, money + income)
+	if is_for_online_teams then
+		for _, force in pairs(game.forces) do
+			if #force.connected_players > 0 then
+				local force_index = force.index
+				local money = call("EasyAPI", "get_force_money", force_index)
+				if money then
+					call("EasyAPI", "set_force_money_by_index", force_index, money + income)
+				end
+			end
+		end
+	else
+		for force_index, money in pairs(call("EasyAPI", "get_forces_money")) do
+			call("EasyAPI", "set_force_money_by_index", force_index, money + income)
+		end
 	end
 end
 
 local mod_settings = {
+	["PTI_is_for_online_teams"] = function(value) is_for_online_teams = value end,
 	["PTI_income"] = function(value) income = value end,
 	["PTI_update_tick"] = function(value)
 		script.on_nth_tick(update_tick, nil)
@@ -35,9 +48,6 @@ local mod_settings = {
 	end
 }
 local function on_runtime_mod_setting_changed(event)
-	-- if event.setting_type ~= "runtime-global" then return end
-	if not match(event.setting, "^PTI_") then return end
-
 	local f = mod_settings[event.setting]
 	if f then f(settings.global[event.setting].value) end
 end

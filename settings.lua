@@ -7,5 +7,9 @@ data:extend({
 		type = "int-setting", name = "PTI_income",
 		setting_type = "runtime-global", localised_name = {"income"},
 		default_value = 10, minimal_value = 1, maximal_value = 8e4
+	}, {
+		type = "bool-setting", name = "PTI_is_for_online_teams",
+		setting_type = "runtime-global",
+		default_value = false
 	}
 })
